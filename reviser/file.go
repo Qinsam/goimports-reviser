@@ -386,7 +386,7 @@ func rebuildImports(
 
 		linesCounter--
 
-		if linesCounter == 0 && (len(thirdImportsGroup) > 0 || len(fourthImportGroup) > 0) {
+		if linesCounter == 0 && (len(thirdImportsGroup) == 0 && len(fourthImportGroup) > 0) {
 			spec = &ast.ImportSpec{Path: &ast.BasicLit{Value: "", Kind: token.STRING}}
 
 			specs = append(specs, spec)

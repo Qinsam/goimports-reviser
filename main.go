@@ -5,8 +5,11 @@ import (
 	"encoding/hex"
 	"flag"
 	"fmt"
+	"io"
+	"io/ioutil"
 	"log"
 	"os"
+	"os/exec"
 	"os/user"
 	"path"
 	"path/filepath"
@@ -205,6 +208,22 @@ func main() {
 
 	if originPath == "" {
 		originPath = reviser.StandardInput
+	}
+
+	cmd := exec.Command("goimports", "-w", originPath)
+	var out io.ReadCloser
+	var err error
+	if out, err = cmd.StdoutPipe(); err != nil {
+		fmt.Println(err)
+	}
+	defer out.Close()
+	if err := cmd.Start(); err != nil {
+		fmt.Println(err)
+	}
+	if opBytes, err := ioutil.ReadAll(out); err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(string(opBytes))
 	}
 
 	if err := validateRequiredParam(originPath); err != nil {
